@@ -1,8 +1,24 @@
 const fs = require('fs');
 const inputStr = String(fs.readFileSync('./input.txt'));
 
-const rpc = [1, 2, 3];
+const mapping = {
+  A: 1,
+  B: 2,
+  C: 3,
+  X: 1,
+  Y: 2,
+  Z: 3,
+}
 
+const rounds = inputStr.split('\n')
+  .map(round =>
+    round
+      .split(' ')
+      .map(l => mapping[l])
+      .reverse() // It's them first in the input file
+  );
+
+// Logic
 const win = 6;
 const tie = 3;
 const loss = 0;
@@ -25,22 +41,12 @@ function score(me, them) {
   return me + outcome(me, them);
 }
 
-function test(me, them, expected) {
-  const o = outcome(me, them);
-  if (o !== expected) {
-    console.log(`me, them`, me, them); // DEBUG
-    console.log(`o`, o); // DEBUG
-    throw Error(`Expected ${expected}, got ${o}`);
-  }
-  return o;
-}
+const sumTotal = (sum, next) => sum + next;
 
-test(1,1, tie);
-test(1,2, loss);
-test(1,3, win);
-test(2,1, win);
-test(2,2, tie);
-test(2,3, loss);
-test(3,1, loss);
-test(3,2, win);
-test(3,3, tie);
+const total = rounds.map(round => {
+  const s = score(...round);
+  console.log(`round, s`, round, s); // DEBUG
+  return s;
+}).reduce(sumTotal, 0);
+
+console.log(`total`, total); // DEBUG
