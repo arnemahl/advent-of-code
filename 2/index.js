@@ -43,10 +43,6 @@ function score(me, them) {
 
 const sumTotal = (sum, next) => sum + next;
 
-const total = rounds.map(round => {
-  const s = score(...round);
-  console.log(`round, s`, round, s); // DEBUG
-  return s;
-}).reduce(sumTotal, 0);
+const total = rounds.map(round => score(...round)).reduce(sumTotal, 0);
 
 console.log(`total`, total); // DEBUG
