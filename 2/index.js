@@ -21,9 +21,9 @@ const mapping = {
   B: 'paper',
   C: 'scissors',
   // I must get:
-  X: 'win',
+  X: 'loss',
   Y: 'tie',
-  Z: 'loss',
+  Z: 'win',
 }
 
 const rounds = inputStr.split('\n')
