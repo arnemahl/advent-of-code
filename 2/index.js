@@ -24,6 +24,13 @@ const rounds = inputStr.split('\n')
 
 // Logic
 function getOutcome(me, them) {
+  if (![1, 2, 3].includes(me)) {
+    throw Error(`I picked ${me}! Must pick 1, 2 or 3`);
+  }
+  if (![1, 2, 3].includes(me)) {
+    throw Error(`they picked ${them}! Must pick 1, 2 or 3`);
+  }
+
   const ans = (3 + me - them) % 3;
   switch(ans) {
     case 1:
