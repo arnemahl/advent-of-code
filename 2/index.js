@@ -2,28 +2,17 @@ const fs = require('fs');
 const inputStr = String(fs.readFileSync('./input.txt'));
 
 // Data
-const score = {
-  outcome: {
-    win: 6,
-    tie: 3,
-    loss: 0,
-  },
-  option: {
-    rock: 1,
-    paper: 2,
-    scissors: 3,
-  },
-}
+const win = 6;
+const tie = 3;
+const loss = 0;
 
 const mapping = {
-  // They pick:
-  A: 'rock',
-  B: 'paper',
-  C: 'scissors',
-  // I must get:
-  X: 'loss',
-  Y: 'tie',
-  Z: 'win',
+  A: 1,
+  B: 2,
+  C: 3,
+  X: loss,
+  Y: tie,
+  Z: win,
 }
 
 const rounds = inputStr.split('\n')
@@ -34,65 +23,33 @@ const rounds = inputStr.split('\n')
   );
 
 // Logic
-const beats = {
-  rock: 'paper',
-  paper: 'scissors',
-  scissors: 'rock',
-}
-const losesTo = {
-  paper: 'rock',
-  scissors: 'paper',
-  rock: 'scissors',
-}
-const outcome_for_a_vs_b = Object.fromEntries(
-  ['rock', 'paper', 'scissors'].map(option => [
-    option,
-    {
-      [losesTo[option]]: 'win',
-      [option]: 'tie',
-      [beats[option]]: 'loss',
-    },
-  ])
-);
-
-function getOutcomeName(me, them) {
-  return outcome_for_a_vs_b[me][them];
-}
-
-function whatShouldIPick(desiredOutcome, them) {
-  switch (desiredOutcome) {
-    case'win':
-      return beats[them];
-    case'tie':
-      return them;
-    case'loss':
-      return losesTo[them];
+function getOutcome(me, them) {
+  const ans = (3 + me - them) % 3;
+  switch(ans) {
+    case 1:
+      return win;
+    case 0:
+      return tie;
+    case 2:
+      return loss;
+    default:
+      throw Error("WTF: " + ans);
   }
 }
 
 function getScore(them, desiredOutcome) {
-  const me = whatShouldIPick(desiredOutcome, them);
+  const diff = desiredOutcome / 3 - 1;
+  const me = (them + diff + 3) % 3;
+  const outcome = getOutcome(me, them);
 
-  {
-    // Verify
-    const outcome = getOutcomeName(me, them);
-
-    if (outcome !== desiredOutcome) {
-      throw Error(`Wanted ${desiredOutcome} but got ${outcome}. They picked ${them} and I picked ${me}`);
-    }
-
-    // Debug
-    if (false) {
-      console.group("round");
-      console.log(`${outcome}: ${me} vs. ${them}`);
-      console.log(me, score.option[me]);
-      console.log(desiredOutcome, score.outcome[desiredOutcome]);
-      console.log(`total:`, score.option[me] + score.outcome[desiredOutcome]);
-      console.groupEnd();
-    }
+  if (outcome !== desiredOutcome) {
+    throw Error(`Wanted ${desiredOutcome} but got ${outcome}`);
+  } else {
+    // console.log(`outcome`, outcome); // DEBUG
+    // console.log(`score`, me + outcome); // DEBUG
   }
 
-  return score.option[me] + score.outcome[desiredOutcome];
+  return me + outcome;
 }
 
 const sumTotal = (sum, next) => sum + next;
