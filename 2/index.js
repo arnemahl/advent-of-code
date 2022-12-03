@@ -80,6 +80,16 @@ function getScore(them, desiredOutcome) {
     if (outcome !== desiredOutcome) {
       throw Error(`Wanted ${desiredOutcome} but got ${outcome}. They picked ${them} and I picked ${me}`);
     }
+
+    // Debug
+    if (true) {
+      console.group("round");
+      console.log(`${outcome}: ${me} vs. ${them}`);
+      console.log(me, score.option[me]);
+      console.log(desiredOutcome, score.outcome[desiredOutcome]);
+      console.log(`total:`, score.option[me] + score.outcome[desiredOutcome]);
+      console.groupEnd();
+    }
   }
 
   return score.option[me] + score.outcome[desiredOutcome];
