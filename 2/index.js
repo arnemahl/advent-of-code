@@ -82,7 +82,7 @@ function getScore(them, desiredOutcome) {
     }
 
     // Debug
-    if (true) {
+    if (false) {
       console.group("round");
       console.log(`${outcome}: ${me} vs. ${them}`);
       console.log(me, score.option[me]);
