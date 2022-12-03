@@ -37,29 +37,9 @@ function getOutcome(me, them) {
   }
 }
 
-const beats = {
-  1: 2,
-  2: 3,
-  3: 1,
-}
-const losesTo = {
-  1: 3,
-  2: 1,
-  3: 2,
-}
-function whatShouldIPick(desiredOutcome, them) {
-  switch (desiredOutcome) {
-    case win:
-      return beats[them];
-    case tie:
-      return them;
-    case loss:
-      return losesTo[them];
-  }
-}
-
 function getScore(them, desiredOutcome) {
-  const me = whatShouldIPick(desiredOutcome, them);
+  const diff = desiredOutcome / 3 - 1;
+  const me = (them + diff + 3) % 3;
   const outcome = getOutcome(me, them);
 
   if (outcome !== desiredOutcome) {
