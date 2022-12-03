@@ -1,5 +1,5 @@
 const fs = require('fs');
-const inputStr = String(fs.readFileSync('./sample_input.txt'));
+const inputStr = String(fs.readFileSync('./input.txt'));
 
 // Data
 const groups = inputStr.split('\n')
@@ -32,6 +32,4 @@ const sumTotal = (sum, next) => sum + next;
 
 const total = groups.map(getPriority).reduce(sumTotal, 0);
 
-console.log(`groups.map(findDuplicate)`, groups.map(findDuplicate)); // DEBUG
-console.log(`groups.map(getPriority)`, groups.map(getPriority)); // DEBUG
 console.log(`total`, total); // DEBUG
