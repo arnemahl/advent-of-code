@@ -9,15 +9,14 @@ const pairs = inputStr.split('\n')
     )
   );
 
-console.log(`pairs`, pairs); // DEBUG
+// console.log(`pairs`, pairs); // DEBUG
 
 // Logic
 function isContaineDir(one, two) {
-  // console.log(`one`, one); // DEBUG
-  // console.log(`two`, two); // DEBUG
-  // console.log(two[0] <= one[0] && one[1] <= two[1]); // DEBUG
-  // return two[0] <= one[0] && one[1] <= two[1];
-  return one[0] <= two[0] && two[1] <= one[1] || two[0] <= one[0] && one[1] <= two[1];
+  return one[0] <= two[0] && two[0] <= one[1]
+      || one[0] <= two[1] && two[1] <= one[1]
+      || two[0] <= one[0] && one[0] <= two[1]
+      || two[0] <= one[1] && one[1] <= two[1];
 }
 
 function isSomeContained(one, two) {
