@@ -1,5 +1,5 @@
 const fs = require('fs');
-const inputStr = String(fs.readFileSync('./sample_input.txt'));
+const inputStr = String(fs.readFileSync('./input.txt'));
 
 // Data
 const pairs = inputStr.split('\n')
@@ -26,6 +26,6 @@ function isSomeContained(one, two) {
 
 console.log(`isSomeContained( [ 2, 8 ], [ 3, 7 ])`, isSomeContained([ 2, 8 ], [ 3, 7 ])); // DEBUG
 
-const ans = pairs.map((pair) => isContaineDir(pair[0], pair[1]))// .filter(Boolean).length;
+const ans = pairs.map((pair) => isContaineDir(pair[0], pair[1])).filter(Boolean).length;
 
 console.log(`ans`, ans); // DEBUG
