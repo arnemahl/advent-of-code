@@ -1,5 +1,5 @@
 const fs = require('fs');
-const inputStr = String(fs.readFileSync('./sample_input.txt'));
+const inputStr = String(fs.readFileSync('./input.txt'));
 
 // Data
 function toCargo(cargoStr) {
