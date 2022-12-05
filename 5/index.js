@@ -51,11 +51,10 @@ function executeStep(cargo, step) {
   const { count, from, to } = step;
 
   // Mutates cargo object!
-  for (let i = 0; i < count; i++) {
-    cargo[to].push(
-      cargo[from].pop()
-    );
-  }
+  cargo[to].push(
+    ...cargo[from].splice(-count)
+  );
+
   return cargo;
 }
 
