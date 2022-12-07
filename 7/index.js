@@ -1,8 +1,7 @@
 // Utils
 const sumTotal = (sum, next) => sum + next;
-const descBy = (getValue) => (one, two) => {
-  return getValue(two) - getValue(one);
-}
+const ascBy = (getValue) => (one, two) => getValue(one) - getValue(two);
+const descBy = (getValue) => (one, two) => getValue(two) - getValue(one);
 console.assert([2, 1, 3].sort(descBy(n => n)).join('') === '321', "descBy test");
 console.assert([2, 1, 3].map(x => ({ x })).sort(descBy(e => e.x)).map(e => e.x).join('') === '321', "descBy test");
 
@@ -20,11 +19,9 @@ function getData(inputStr, debug = () => {}) {
       sizeOfDirectFiles: 0, // size of files excluding those in sub-directories
     };
   }
-  const root = node('filesystem');
-  let current = root;
+  let current = node('filesystem');
   const allDirs = [];
-
-  trackDir('/');
+  const root = trackDir('/');
 
   // Populating the data model
   function goUp() {
@@ -45,6 +42,7 @@ function getData(inputStr, debug = () => {}) {
     const dir = node(dirName, current);
     allDirs.push(dir);
     current.dirs.push(dir);
+    return dir;
   }
   function trackFile(file) {
     debug(`TRACK FILE`, file);
@@ -105,11 +103,28 @@ function getData(inputStr, debug = () => {}) {
 }
 
 // Logic
-function getAns({ allDirs }) {
+function getAns1({ allDirs, root }) {
+  const freeSpace = fsSize - root.size;
+  const mustFreeUp = freeSpaceNeeded - freeSpace;
+
   return allDirs
     .filter(dir => dir.size < 100_000)
     .map(dir => dir.size)
     .reduce(sumTotal, 0);
+}
+
+const fsSize = 70_000_000;
+const freeSpaceNeeded = 30_000_000;
+
+function getAns2({ allDirs, root }) {
+  const freeSpace = fsSize - root.size;
+  const mustFreeUp = freeSpaceNeeded - freeSpace;
+
+  return allDirs
+    .filter(dir => dir.size > mustFreeUp)
+    .sort(ascBy(dir => dir.size))
+    [0]
+    .size;
 }
 
 // Execute
@@ -118,7 +133,7 @@ const fs = require('fs');
 {
   // Test
   const data = getData(String(fs.readFileSync('./sample_input.txt')));
-  const ans = getAns(data);
+  const ans1 = getAns1(data);
   const sizeMap = Object.fromEntries(
     data.allDirs.map(dir => [dir.name, dir.size])
   );
@@ -126,11 +141,24 @@ const fs = require('fs');
   console.assert(sizeMap.a === 94853, 'a', sizeMap.a);
   console.assert(sizeMap.d === 24933642, 'd', sizeMap.d);
   console.assert(sizeMap['/'] === 48381165, '/', sizeMap['/']);
-  console.assert(ans === 95437, "sample_input test", ans);
+  console.assert(ans1 === 95437, "sample_input test", ans1);
 }
 {
   // Actual data
   const data = getData(String(fs.readFileSync('./input.txt')));
-  const ans = getAns(data);
-  console.log(`ans`, ans); // DEBUG
+  const ans1 = getAns(data);
+  console.log(`ans1`, ans1); // DEBUG
+}
+
+{
+  // Test
+  const data = getData(String(fs.readFileSync('./sample_input.txt')));
+  const ans2 = getAns2(data);
+  console.assert(ans2 === 24933642, "sample_input test", ans2);
+}
+{
+  // Actual data
+  const data = getData(String(fs.readFileSync('./input.txt')));
+  const ans2 = getAns2(data);
+  console.log(`ans2`, ans2); // DEBUG
 }
