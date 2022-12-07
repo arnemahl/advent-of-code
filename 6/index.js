@@ -12,14 +12,14 @@ const input = inputStr.split('');
 const unique = (item, index, array) => array.indexOf(item) === index;
 
 function isAfterMarker(_, index, array) {
-  return index > 4
-      && array.slice(index - 4, index).every(unique);
+  return index > 14
+      && array.slice(index - 14, index).every(unique);
 }
 
 const index = input.findIndex(isAfterMarker);
 
 if (debug) {
-  console.log(`marker:`, inputStr.slice(index - 4, index)); // DEBUG
+  console.log(`marker:`, inputStr.slice(index - 14, index)); // DEBUG
 }
 
 console.log(`index`, index);
