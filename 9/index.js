@@ -60,40 +60,68 @@ function followHead(head, tail) {
   return vec.add(tail, diff.map(absMax(1)));
 }
 
-function logMap(path, head, tail) {
-  const map = Array(5).fill().map((_, y) => {
-    return Array(6).fill().map((_, x) => '.');
+let visualize = false; // false | 1 | 2
+
+function logMap(path, rope) {
+  function getSize() {
+    switch (visualize) {
+      case 1:
+        return [6, 5];
+      case 2:
+        return [26, 21];
+    }
+  }
+  const [xs, ys] = getSize();
+
+  const map = Array(ys).fill().map((_, y) => {
+    return Array(xs).fill().map((_, x) => '.');
   });
   const draw = (char) => ([x, y]) => map[y][x] = char;
 
   path.forEach(draw('#'));
-  draw('T')(tail);
-  draw('H')(head);
+  rope.slice(1).reverse().map((tail, index) => {
+    const number = rope.length - index - 1;
+    draw(number)(tail);
+  })
+  draw('H')(rope[0]);
 
   console.log(`\n` + map.reverse().map(line => line.join('')).join('\n'));
 }
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-let visualize = false;
 
-async function getAnswerTask1(moves) {
-  let head = [0, 0]; // The starting position is arbitrary, use 0,0
-  let tail = head;
-  const path = [tail];
+async function getAnswerTask1(moves, nofKnots = 2, start = [0, 0]) {
+  if (nofKnots < 2) throw Error('Nope!');
+
+  let rope = Array(nofKnots).fill(start);
+  const getHead = () => rope[0];
+  const getTail = () => rope.slice(-1)[0];
+  const path = [getTail()];
 
   if (visualize) {
-    logMap(path, head, tail);
+    logMap(path, rope);
+    await wait(1000);
   }
 
   for (let move of moves) {
-    head = vec.add(head, move);
-    tail = followHead(head, tail);
-    path.push(tail);
+    const head = vec.add(getHead(), move);
+    let prevKnot = head;
+
+    const tails = rope.slice(1).map((knot, index) => {
+      // return new pos AND assign it to prevKnot
+      return prevKnot = followHead(prevKnot, knot);
+    });
+
+    rope = [head, ...tails];
+    path.push(getTail());
 
     if (visualize) {
-      await wait(300);
-      logMap(path, head, tail);
+      await wait(75);
+      logMap(path, rope);
     }
+  }
+  if (visualize) {
+    await wait(1000);
   }
 
   return path.map(pos => pos.join()).filter(unique).length;
@@ -102,10 +130,12 @@ async function getAnswerTask1(moves) {
 // Execute
 const fs = require('fs');
 
+// 9.1
 async function task1_test() {
-  // visualize = true;
+  visualize = 1;
   const data = getData(String(fs.readFileSync('./sample_input.txt')));
   const ans = await getAnswerTask1(data);
+  visualize = false;
 
   console.assert(ans === 13, 'Task 1', ans);
 }
@@ -117,8 +147,37 @@ async function task1() {
   console.log(`Task 1:`, ans);
 }
 
+// 9.2
+async function task2_test1() {
+  visualize = 1;
+  const data = getData(String(fs.readFileSync('./sample_input.txt')));
+  const ans = await getAnswerTask1(data, 10);
+  visualize = false;
 
+  console.assert(ans === 13, 'Task 2 ex 1', ans);
+}
+async function task2_test2() {
+  visualize = 2;
+  const data = getData(String(fs.readFileSync('./sample_input_2.txt')));
+  const ans = await getAnswerTask1(data, 10, [11, 5]);
+  visualize = false;
+
+  console.assert(ans === 36, 'Task 2 ex 2', ans);
+}
+
+async function task2() {
+  const data = getData(String(fs.readFileSync('./input.txt')));
+  const ans = await getAnswerTask1(data, 10);
+
+  console.log(`Task 2:`, ans);
+}
+
+// Choose which to run
 (async () => {
   await task1_test();
+  await task2_test1();
+  await task2_test2();
+
   await task1();
+  await task2();
 })();
