@@ -18,23 +18,19 @@ function getLog(instructions) {
   let X = 1;
   let log = [];
 
-  function check() {
-    const shouldCount = (cycle - 20) % 40 === 0;
-    if (shouldCount) {
-      const signalStrength = cycle * X;
-      log.push({ cycle, X, signalStrength });
-    }
+  function addLog() {
+    log.push({ cycle, X });
   }
 
   instructions.forEach(({ cmd, arg }) => {
     switch (cmd) {
       case 'noop':
-        cycle++; check();
+        cycle++; addLog();
         break;
       case 'addx': {
-        cycle++; check();
+        cycle++; addLog();
         X += arg;
-        cycle++; check();
+        cycle++; addLog();
       }
     }
   });
@@ -42,8 +38,21 @@ function getLog(instructions) {
   return log;
 }
 
+function getSignalStrenghtLog(instructions) {
+  return getLog(instructions)
+    .map(({ cycle, X }) => {
+      const shouldCount = (cycle - 20) % 40 === 0;
+      if (shouldCount) {
+        return {cycle, X, signalStrength: cycle * X };
+      }
+    })
+    .filter(Boolean);
+}
+
 function getAnswer(instructions) {
-  return getLog(instructions).map(entry => entry.signalStrength).reduce(sumTotal, 0);
+  return getSignalStrenghtLog(instructions)
+    .map(entry => entry.signalStrength)
+    .reduce(sumTotal, 0);
 }
 
 
@@ -58,7 +67,7 @@ function task_1_test_2() {
   console.assert(ans === 13140, 'Task 1 ans wrong:', ans);
 
   const str = input => JSON.stringify(input, null, 2);
-  const log = getLog(data);
+  const log = getSignalStrenghtLog(data);
   const expected = [
     { cycle: 20, X: 21, signalStrength: 420 },
     { cycle: 60, X: 19, signalStrength: 1140 },
