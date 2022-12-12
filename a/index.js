@@ -55,6 +55,19 @@ function getAnswer(instructions) {
     .reduce(sumTotal, 0);
 }
 
+function getAnswerTask2(instructions) {
+  const log = getLog(instructions);
+
+  return log
+    .map(({ cycle, X }, index) => {
+      const cX = index % 40;
+      const linebreak = (index !== 0 && cX === 0) ? '\n' : '';
+      const onOrOff = Math.abs(cX - X) < 2 ? '#' : '.';
+      return linebreak + onOrOff;
+    })
+    .join('');
+}
+
 
 // Execute
 const fs = require('fs');
@@ -80,6 +93,15 @@ function task_1_test_2() {
   console.assert(str(log) === str(expected), "Task 1 log wrong:", log);
 }
 
+function task_2_test() {
+  const data = getData(String(fs.readFileSync('./sample_input_2.txt')));
+  const ans = getAnswerTask2(data);
+
+  const expected = String(fs.readFileSync('./sample_output_2_2.txt'));
+
+  console.assert(ans === expected, `Task 2 ans wrong:`, '\n' + ans);
+}
+
 function task_1() {
   const data = getData(String(fs.readFileSync('./input.txt')));
   const ans = getAnswer(data);
@@ -87,7 +109,16 @@ function task_1() {
   console.log(`Task 1:`, ans);
 }
 
+function task_2() {
+  const data = getData(String(fs.readFileSync('./input.txt')));
+  const ans = getAnswerTask2(data);
+
+  console.log(`Task 2:\n`, ans);
+}
+
 {
   task_1_test_2();
+  task_2_test();
   task_1();
+  task_2();
 }
