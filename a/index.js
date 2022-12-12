@@ -25,12 +25,12 @@ function getLog(instructions) {
   instructions.forEach(({ cmd, arg }) => {
     switch (cmd) {
       case 'noop':
-        cycle++; addLog();
+        addLog(); cycle++;
         break;
       case 'addx': {
-        cycle++; addLog();
+        addLog(); cycle++;
+        addLog(); cycle++;
         X += arg;
-        cycle++; addLog();
       }
     }
   });
