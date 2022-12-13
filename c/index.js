@@ -1,3 +1,8 @@
+// Utils
+const minimize = (one, two) => {
+  return one < two ? one : two;
+}
+
 // Data
 function getData(inputString) {
   function getElevation(char) {
@@ -96,6 +101,14 @@ function getAns_task1({ start, goal, squares }) {
   return path ? path.length - 1 : undefined;
 }
 
+function getAns_task2({ goal, squares }) {
+  return squares
+    .filter(square => square.elevation === 0)
+    .map(start => getAns_task1({ start, goal, squares }))
+    .filter(steps => typeof steps === 'number')
+    .reduce(minimize);
+}
+
 // Execute
 const fs = require('fs');
 
@@ -111,7 +124,21 @@ function task_1() {
   console.log(`Task 1:`, ans);
 }
 
+function task_2_test() {
+  const data = getData(String(fs.readFileSync('./sample_input.txt')));
+  const ans = getAns_task2(data);
+  console.assert(ans === 29, "Task 2 ans wrong:", ans);
+}
+
+function task_2() {
+  const data = getData(String(fs.readFileSync('./input.txt')));
+  const ans = getAns_task2(data);
+  console.log(`Task 2:`, ans);
+}
+
 {
   task_1_test();
+  task_2_test();
   task_1();
+  task_2();
 }
