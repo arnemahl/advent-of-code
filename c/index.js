@@ -93,7 +93,7 @@ function getAns_task1({ start, goal, squares }) {
 
   // Nof steps is `path.length - 1`, since path includes the starting point,
   // but the cost to get there is 0 steps.
-  return path.length - 1;
+  return path ? path.length - 1 : undefined;
 }
 
 // Execute

@@ -71,5 +71,5 @@ module.exports = function A_Star({ start, goal, h, nodes }) {
   }
 
   // Open set is empty but goal was never reached
-  return Number.POSITIVE_INFINITY;
+  return undefined;
 }
